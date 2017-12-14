@@ -3,7 +3,7 @@ using Orleans;
 
 namespace Grains
 {
-    public interface ICounterGrain : IGrainWithGuidKey
+    public interface ICounterGrain : IGrainWithStringKey
     {
         Task Increment(int increment);
         Task<int> GetCount();

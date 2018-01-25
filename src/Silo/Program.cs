@@ -1,5 +1,6 @@
 ﻿using System;
 using Orleans.Runtime.Host;
+using Orleans.Storage;
 
 namespace Silo
 {
@@ -13,6 +14,8 @@ namespace Silo
             {
                 ConfigFileName = "OrleansConfiguration.xml"
             };
+            _siloHost.LoadOrleansConfig();
+            _siloHost.Config.Globals.RegisterStorageProvider<MemoryStorage>("OrleansStorage");
             _siloHost.InitializeOrleansSilo();
             var start = _siloHost.StartOrleansSilo();
             if (!start)

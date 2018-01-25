@@ -1,5 +1,6 @@
 ﻿using System;
 using Botwin;
+using Grains;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,27 +15,7 @@ namespace Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddBotwin();
-            services.AddSingleton(provider =>
-            {
-                return Policy<IClusterClient>
-                    .Handle<Exception>()
-                    .WaitAndRetry(new[]
-                    {
-                        TimeSpan.FromSeconds(1),
-                        TimeSpan.FromSeconds(2),
-                        TimeSpan.FromSeconds(3)
-                    })
-                    .Execute(() =>
-                    {
-                        var config = ClientConfiguration.LocalhostSilo(30000);
-                        var client = ClientBuilder.CreateDefault()
-                            .UseConfiguration(config)
-                            .Build();
-
-                        client.Connect().Wait();
-                        return client;
-                    });
-            });
+            services.AddSingleton(provider => DemoOrleansClient.ClusterClient);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -47,4 +28,6 @@ namespace Web
             app.UseBotwin();
         }
     }
+   
 }
+

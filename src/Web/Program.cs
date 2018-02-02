@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Grains;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -26,10 +27,8 @@ namespace Web
                     var client = ClientBuilder.CreateDefault()
                         .UseConfiguration(config)
                         .Build();
-
+                    
                     client.Connect().Wait();
-
-
 
                     return client;
                 });

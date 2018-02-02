@@ -5,8 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Core" Version="2.0.0-beta2" />
-    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="2.0.0-beta2" />
+    <PackageReference Include="LiteDB" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="2.0.0-beta3" />
+    <PackageReference Include="Microsoft.Orleans.EventSourcing" Version="2.0.0-beta3" />
+    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="2.0.0-beta3" />
   </ItemGroup>
 
 </Project>

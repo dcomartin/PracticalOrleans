@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using Botwin;
 using Botwin.Response;
 using Grains;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using Orleans;
 
 namespace Web
 {
@@ -16,7 +13,9 @@ namespace Web
         {
             Get("/customers/{customerId:Guid}", async (request, response, routeData) =>
             {
-                var customer = await CustomerStateService.GetCustomer(Guid.Parse(routeData.Values["customerId"].ToString()));
+                var customer = await CustomerStateService
+                    .GetCustomer(Guid.Parse(routeData.Values["customerId"].ToString()));
+
                 await response.Negotiate(customer);
             });
 
@@ -26,7 +25,8 @@ namespace Web
                 await CustomerStateService.CreateCustomer(customerId, "CodeOpinion");
 
                 response.StatusCode = 201;
-                response.Headers.Add(new KeyValuePair<string, StringValues>("Location", $"/customers/{customerId}"));
+                response.Headers.Add(new KeyValuePair<string, StringValues>("Location", 
+                    $"/customers/{customerId}"));
             });
         }
     }

@@ -31,14 +31,15 @@ namespace Silo
         private static async Task<ISiloHost> StartSilo()
         {
             var config = ClusterConfiguration.LocalhostPrimarySilo();
+            config.Globals.ClusterId = "Test";
             config.AddMemoryStorageProvider();
 
             var builder = new SiloHostBuilder()
                 .UseConfiguration(config)
                 .ConfigureApplicationParts(parts =>
-                    parts.AddApplicationPart(typeof(IInventoryItemGrain).Assembly)
-                        .WithReferences())
-                //.ConfigureLogging(logging => logging.AddConsole())
+                    parts.AddApplicationPart(typeof(IInventoryItemGrain).Assembly).WithReferences())
+                .ConfigureLogging(logging => logging.AddConsole())
+
                 ;
 
             var host = builder.Build();

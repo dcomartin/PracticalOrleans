@@ -25,6 +25,8 @@ namespace Web
                 .Execute(() =>
                 {
                     var config = ClientConfiguration.LocalhostSilo();
+                  config.ClusterId = "Test";
+
                     var builder = new ClientBuilder()
                         .UseConfiguration(config)
                         .ConfigureApplicationParts(parts =>

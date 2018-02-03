@@ -22,7 +22,7 @@ namespace Grains
             return this;
         }
 
-        public BankAccountState ApplyEvent(Withdrawn evnt)
+        public BankAccountState Apply(Withdrawn evnt)
         {
             Balance -= evnt.Amount;
             return this;
@@ -64,6 +64,11 @@ namespace Grains
         public Task<decimal> Balance()
         {
             return Task.FromResult(State.Balance);
+        }
+
+        public override Task OnActivateAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

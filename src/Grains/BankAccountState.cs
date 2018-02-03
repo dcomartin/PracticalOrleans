@@ -8,13 +8,10 @@ using Orleans.Providers;
 
 namespace Grains
 {
-    [Serializable]
     public class Deposited : BankAccountEvent { }
 
-    [Serializable]
     public class Withdrawn : BankAccountEvent { }
 
-    [Serializable]
     public class BankAccountState
     {
         public decimal Balance { get; set; }
@@ -32,8 +29,7 @@ namespace Grains
         }
     }
 
-    [Serializable]
-    public class BankAccountEvent
+    public abstract class BankAccountEvent
     {
         public decimal Amount;
     }
@@ -45,7 +41,6 @@ namespace Grains
         Task<decimal> Balance();
     }
 
-    [StorageProvider(ProviderName = "OrleansStorage")]
     public class BankAccountGrain : JournaledGrain<BankAccountState>, IBankAccountGrain
     {
         public Task Deposit()

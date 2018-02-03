@@ -1,4 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Grains;
+using Microsoft.Extensions.Logging;
+using Orleans;
+using Orleans.Hosting;
+using Orleans.Runtime.Configuration;
 using Orleans.Runtime.Host;
 using Orleans.Storage;
 
@@ -6,26 +12,38 @@ namespace Silo
 {
     class Program
     {
-        private static SiloHost _siloHost;
-
-        static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            _siloHost = new SiloHost(System.Net.Dns.GetHostName())
+            try
             {
-                ConfigFileName = "OrleansConfiguration.xml"
-            };
-            _siloHost.LoadOrleansConfig();
-            _siloHost.Config.Globals.RegisterStorageProvider<MemoryStorage>("OrleansStorage");
-            _siloHost.InitializeOrleansSilo();
-            var start = _siloHost.StartOrleansSilo();
-            if (!start)
-            {
-                throw new SystemException(String.Format("Failed to start Orleans silo '{0}' as a {1} node",
-                    _siloHost.Name, _siloHost.Type));
-            }
+                var host = await StartSilo();
+                Console.WriteLine("Press Enter to terminate...");
+                Console.ReadLine();
 
-            Console.WriteLine("Silo is running...");
-            Console.ReadLine();
+                await host.StopAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        private static async Task<ISiloHost> StartSilo()
+        {
+            var config = ClusterConfiguration.LocalhostPrimarySilo();
+            config.AddMemoryStorageProvider();
+
+            var builder = new SiloHostBuilder()
+                .UseConfiguration(config)
+                .ConfigureApplicationParts(parts =>
+                    parts.AddApplicationPart(typeof(IInventoryItemGrain).Assembly)
+                        .WithReferences())
+                //.ConfigureLogging(logging => logging.AddConsole())
+                ;
+
+            var host = builder.Build();
+            await host.StartAsync();
+            return host;
         }
     }
 }

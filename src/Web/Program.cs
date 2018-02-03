@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Grains;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Runtime.Configuration;
 using Polly;
@@ -23,13 +24,16 @@ namespace Web
                 })
                 .Execute(() =>
                 {
-                    var config = ClientConfiguration.LocalhostSilo(30000);
-                    var client = ClientBuilder.CreateDefault()
+                    var config = ClientConfiguration.LocalhostSilo();
+                    var builder = new ClientBuilder()
                         .UseConfiguration(config)
-                        .Build();
-                    
-                    client.Connect().Wait();
+                        .ConfigureApplicationParts(parts =>
+                            parts.AddApplicationPart(typeof(IInventoryItemGrain).Assembly))
+                        .ConfigureLogging(logging => logging.AddConsole());
 
+                    var client = builder.Build();
+                    client.Connect().Wait();
+                    
                     return client;
                 });
 

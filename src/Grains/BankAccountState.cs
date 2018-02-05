@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Orleans;
 using Orleans.EventSourcing;
-using Orleans.Providers;
 
 namespace Grains
 {
+    public abstract class BankAccountEvent
+    {
+        public decimal Amount { get; set; }
+    }
+
     public class Deposited : BankAccountEvent { }
 
     public class Withdrawn : BankAccountEvent { }
@@ -28,35 +29,30 @@ namespace Grains
             return this;
         }
     }
-
-    public abstract class BankAccountEvent
+    
+    public interface IBankAccountGrain : IGrainWithGuidKey
     {
-        public decimal Amount;
-    }
-
-    public interface IBankAccountGrain : IGrainWithStringKey
-    {
-        Task Deposit();
-        Task Withdrawl();
+        Task Deposit(decimal amount);
+        Task Withdrawl(decimal amount);
         Task<decimal> Balance();
     }
 
     public class BankAccountGrain : JournaledGrain<BankAccountState>, IBankAccountGrain
     {
-        public Task Deposit()
+        public Task Deposit(decimal amount)
         {
             RaiseEvent(new Deposited
             {
-                Amount = 100
+                Amount = amount
             });
             return ConfirmEvents();
         }
 
-        public Task Withdrawl()
+        public Task Withdrawl(decimal amount)
         {
             RaiseEvent(new Withdrawn
             {
-                Amount = 50
+                Amount = amount
             });
             return ConfirmEvents();
         }
@@ -64,11 +60,6 @@ namespace Grains
         public Task<decimal> Balance()
         {
             return Task.FromResult(State.Balance);
-        }
-
-        public override Task OnActivateAsync()
-        {
-            return Task.CompletedTask;
         }
     }
 }

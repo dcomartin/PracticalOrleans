@@ -14,7 +14,7 @@ namespace Web
             Get("/bank/account/{AccountId:Guid}", async (request, response, routeData) =>
             {
                 var accountId = Guid.Parse(routeData.Values["AccountID"].ToString());
-                var grain = clusterClient.GetGrain<IBankAccountGrain>(accountId.ToString());
+                var grain = clusterClient.GetGrain<IBankAccountGrain>(accountId);
                 var balance = await grain.Balance();
 
                 await response.AsJson(balance);
@@ -23,8 +23,8 @@ namespace Web
             Post("/bank/account/{AccountId:Guid}/deposit", async (request, response, routeData) =>
             {
                 var accountId = Guid.Parse(routeData.Values["AccountID"].ToString());
-                var grain = clusterClient.GetGrain<IBankAccountGrain>(accountId.ToString());
-                await grain.Deposit();
+                var grain = clusterClient.GetGrain<IBankAccountGrain>(accountId);
+                await grain.Deposit(100);
                 
                 response.StatusCode = 204;
             });
@@ -32,8 +32,8 @@ namespace Web
             Post("/bank/account/{AccountId:Guid}/withdrawl", async (request, response, routeData) =>
             {
                 var accountId = Guid.Parse(routeData.Values["AccountID"].ToString());
-                var grain = clusterClient.GetGrain<IBankAccountGrain>(accountId.ToString());
-                await grain.Withdrawl();
+                var grain = clusterClient.GetGrain<IBankAccountGrain>(accountId);
+                await grain.Withdrawl(50);
 
                 response.StatusCode = 204;
             });

@@ -13,27 +13,10 @@ namespace Grains
 
     public class Withdrawn : BankAccountEvent { }
 
-    public class BankAccountState
-    {
-        public decimal Balance { get; set; }
-
-        public BankAccountState Apply(Deposited evnt)
-        {
-            Balance += evnt.Amount;
-            return this;
-        }
-
-        public BankAccountState Apply(Withdrawn evnt)
-        {
-            Balance -= evnt.Amount;
-            return this;
-        }
-    }
-    
     public interface IBankAccountGrain : IGrainWithGuidKey
     {
         Task Deposit(decimal amount);
-        Task Withdrawl(decimal amount);
+        Task Withdraw(decimal amount);
         Task<decimal> Balance();
     }
 
@@ -48,7 +31,7 @@ namespace Grains
             return ConfirmEvents();
         }
 
-        public Task Withdrawl(decimal amount)
+        public Task Withdraw(decimal amount)
         {
             RaiseEvent(new Withdrawn
             {
@@ -60,6 +43,23 @@ namespace Grains
         public Task<decimal> Balance()
         {
             return Task.FromResult(State.Balance);
+        }
+    }
+
+    public class BankAccountState
+    {
+        public decimal Balance { get; set; }
+
+        public BankAccountState Apply(Deposited evnt)
+        {
+            Balance += evnt.Amount;
+            return this;
+        }
+
+        public BankAccountState Apply(Withdrawn evnt)
+        {
+            Balance -= evnt.Amount;
+            return this;
         }
     }
 }

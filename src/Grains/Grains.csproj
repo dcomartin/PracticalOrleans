@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EventStore.ClientAPI.NetCore" Version="4.1.0.23" />
     <PackageReference Include="LiteDB" Version="4.1.1" />
     <PackageReference Include="Microsoft.Orleans.Core" Version="2.0.0-beta3" />
     <PackageReference Include="Microsoft.Orleans.EventSourcing" Version="2.0.0-beta3" />

@@ -33,7 +33,7 @@ namespace Web
             {
                 var accountId = Guid.Parse(routeData.Values["AccountID"].ToString());
                 var grain = clusterClient.GetGrain<IBankAccountGrain>(accountId);
-                await grain.Withdrawl(50);
+                await grain.Withdraw(50);
 
                 response.StatusCode = 204;
             });
